@@ -1,0 +1,21 @@
+{ 
+    "config": 
+        {
+            "video_path": "/home/username/mp4s/"
+        }, 
+    "videos":
+        {
+            "videoOne": 
+                {
+                    "loop": true,
+                    "audio": false,  
+                    "path": "videoOne.mkv"
+                },
+            "videoTwo": 
+                {
+                    "loop": true,
+                    "audio": false, 
+                    "path": "videoTwo.mp4"
+                }
+        }
+}
