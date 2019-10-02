@@ -19,5 +19,5 @@ def msg(cmd, *args):
     my_msgr.talk(client=my_conn, topic='video_messenger', msg=msg_str)
 
 if __name__ == '__main__':
-    msg('play', 'eyes')
+    #msg('play', 'eyes')
     msg('kill')

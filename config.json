@@ -1,7 +1,7 @@
 { 
     "config": 
         {
-            "video_path": "/home/username/mp4s/"
+            "video_path": "/home/<username>/videos"
         }, 
     "videos":
         {
@@ -9,13 +9,13 @@
                 {
                     "loop": true,
                     "audio": false,  
-                    "path": "videoOne.mkv"
+                    "path": "video_one.mkv"
                 },
             "videoTwo": 
                 {
                     "loop": true,
                     "audio": false, 
-                    "path": "videoTwo.mp4"
+                    "path": "video_two.mp4"
                 }
         }
 }

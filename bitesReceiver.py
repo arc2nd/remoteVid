@@ -34,7 +34,9 @@ class VideoListener(BaseMessenger):
         avail_videos = {}
         for v in self.config_dict['videos']:
             avail_videos[v] = self.config_dict['videos'][v]
-            avail_videos[v]['path'] = os.path.join(self.config_dict['config']['video_path'], avail_videos[v]['path'])
+            tmp_path = os.path.join(self.config_dict['config']['video_path'], avail_videos[v]['path'])
+            avail_videos[v]['path'] = tmp_path
+        print(avail_videos)
         return avail_videos
 
     def launch_video(self, video):
@@ -83,6 +85,8 @@ class VideoListener(BaseMessenger):
                     print('video: {}'.format(video))
             if cmd == 'kill':
                 self.kill_video()
+            if cmd == 'refresh':
+                self.find_videos()
 
 
     def listen(self, client, topic):
