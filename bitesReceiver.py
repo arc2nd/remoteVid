@@ -86,7 +86,8 @@ class VideoListener(BaseMessenger):
             if cmd == 'kill':
                 self.kill_video()
             if cmd == 'refresh':
-                self.find_videos()
+                self.config_dict = self.load_config()
+                self.avail_videos = self.find_videos()
 
 
     def listen(self, client, topic):
