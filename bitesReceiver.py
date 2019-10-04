@@ -18,8 +18,8 @@ def parse_args(all_args):
 
 
 class VideoListener(BaseMessenger):
-    def __init__(self):
-        super(VideoListener, self).__init__()
+    def __init__(self, path):
+        super(VideoListener, self).__init__(path)
         self.config_dict = self.load_config()
         self.avail_videos = self.find_videos()
         self.proc = False
@@ -110,8 +110,8 @@ class VideoListener(BaseMessenger):
 
 if __name__ == '__main__':
     options, args = parse_args(sys.argv[1:])
-    my_msgr = VideoListener()
-    my_conn = my_msgr.get_conn('192.168.1.3')
+    my_msgr = VideoListener('/home/james/scripts/bites/envs.crypt')
+    my_conn = my_msgr.get_conn(my_msgr.creds['SERVER'])
     if options.listen:
         my_msgr.listen(my_conn, 'video_messenger')
     else:
