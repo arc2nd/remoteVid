@@ -3,6 +3,8 @@
 import os
 import json
 import types
+import signal
+import commands
 import datetime
 import subprocess
 
@@ -40,8 +42,8 @@ class VideoListener(BaseMessenger):
         return avail_videos
 
     def launch_video(self, video):
-        # cmd = 'omxplayer --aspect-mode fill --font-size 0'
-        cmd = 'vlc'
+        cmd = 'omxplayer' # --aspect-mode fill --font-size 0'
+        # cmd = 'vlc'
         vid_path = self.avail_videos[video]['path']
         loop = self.avail_videos[video]['loop'] 
         audio = self.avail_videos[video]['audio']
@@ -51,18 +53,23 @@ class VideoListener(BaseMessenger):
         else:
             loop = ''
         if not audio:
-            audio = '--vol -15000'
+            audio = '-15000'
         else:
-            audio = ''
+            audio = '0'
 
-        # self.proc = subprocess.Popen([cmd, loop, audio, vid_path, '&'], shell=False, stdout=subprocess.PIPE)
-        self.proc = subprocess.Popen([cmd, vid_path, '&'], shell=False, stdout=subprocess.PIPE)        
+        print('{} {}'.format(cmd, vid_path))
+        self.proc = subprocess.Popen([cmd, '--aspect-mode', 'fill', '--font-size', '0', loop, '--vol', audio, vid_path, '&'], 
+                shell=False, preexec_fn=os.setsid, stdout=subprocess.PIPE)
+        # status, output = commands.getstatusoutput('{} {} {}'.format(cmd, audio, vid_path))
+        print('{} {}'.format(cmd, vid_path))
+        # self.proc = subprocess.Popen([cmd, vid_path, '&'], shell=False, stdout=subprocess.PIPE)        
  
     def kill_video(self):
         try:
             self.proc.terminate()
             self.proc = False
         except:
+            os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)
             print('failed to kill process')            
 
     def on_message(self, client, userdata, msg):
@@ -76,13 +83,19 @@ class VideoListener(BaseMessenger):
         if 'command' in body_dict: # and 'video' in body_dict:
             cmd = body_dict['command']
             print('command: {}'.format(cmd))
-            if cmd == 'play':
+            if cmd.lower() == 'play':
                 video = body_dict['video']
+                print('\tvid: {}'.format(video))
+                print('\tpath: {}'.format(self.avail_videos[video]['path']))
+                print(os.path.exists(self.avail_videos[video]['path']))
                 if isinstance(video, types.ListType):
                     video = video[0]
                 if video in self.avail_videos:
+                    print('video: {}'.format(video))
                     self.launch_video(video)
                     print('video: {}'.format(video))
+                else:
+                    print('video not found')
             if cmd == 'kill':
                 self.kill_video()
             if cmd == 'refresh':
@@ -110,7 +123,7 @@ class VideoListener(BaseMessenger):
 
 if __name__ == '__main__':
     options, args = parse_args(sys.argv[1:])
-    my_msgr = VideoListener('/home/james/scripts/bites/envs.crypt')
+    my_msgr = VideoListener('/home/pi/scripts/bites/envs.crypt')
     my_conn = my_msgr.get_conn(my_msgr.creds['SERVER'])
     if options.listen:
         my_msgr.listen(my_conn, 'video_messenger')
