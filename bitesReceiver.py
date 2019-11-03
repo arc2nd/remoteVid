@@ -4,6 +4,7 @@ import os
 import json
 import types
 import signal
+import psutil
 import commands
 import datetime
 import subprocess
@@ -58,15 +59,19 @@ class VideoListener(BaseMessenger):
             audio = '0'
 
         print('{} {}'.format(cmd, vid_path))
-        self.proc = subprocess.Popen([cmd, '--aspect-mode', 'fill', '--font-size', '0', loop, '--vol', audio, vid_path, '&'], 
+        self.proc = subprocess.Popen([cmd, '--aspect-mode', 'fill', '--font-size', '0', loop, '--vol', audio, vid_path], 
                 shell=False, preexec_fn=os.setsid, stdout=subprocess.PIPE)
         # status, output = commands.getstatusoutput('{} {} {}'.format(cmd, audio, vid_path))
         print('{} {}'.format(cmd, vid_path))
+        print(self.proc.pid)
         # self.proc = subprocess.Popen([cmd, vid_path, '&'], shell=False, stdout=subprocess.PIPE)        
  
     def kill_video(self):
         try:
+            for child in psutil.Process(self.proc.pid).children(recursive=True):
+                child.kill()
             self.proc.terminate()
+            self.proc.kill()
             self.proc = False
         except:
             os.killpg(os.getpgid(self.proc.pid), signal.SIGTERM)

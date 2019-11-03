@@ -25,7 +25,7 @@ def msg(cmd, *args):
     msg_str = json.dumps(msg_dict, sort_keys=True) # , indent=4)
 
     # Create Messenger Object
-    my_msgr = BaseMessenger('/home/james/scripts/bites/envs.crypt')
+    my_msgr = BaseMessenger('/home/pi/scripts/bites/envs.crypt')
     my_conn = my_msgr.get_conn(my_msgr.creds['SERVER'])
     my_msgr.talk(client=my_conn, topic='video_messenger', msg=msg_str)
 
